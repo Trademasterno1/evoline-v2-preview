@@ -71,4 +71,22 @@ const loader=document.getElementById('loader');addEventListener('load',()=>setTi
 const header=document.getElementById('header');const hero=document.getElementById('heroMedia');
 const journey=document.querySelector('.journey'),cinemaShots=[...document.querySelectorAll('.cinema-shot')],cinemaCopy=document.getElementById('cinemaCopy');const cinemaStages=[{k:'THE EVOLINE TEAM',t:'A new chapter<br>begins with people.',d:'The right people bring clinic owners, doctors and investors together — with preparation, discretion and purpose.',l:'THE EVOLINE TEAM'},{k:'THE SELLER’S ROOM',t:'Every opportunity<br>has a story.',d:'We begin by understanding the clinic, its operations, its value and the owner’s next chapter.',l:'UNDERSTANDING THE SELLER'},{k:'THE BUYER’S ROOM',t:'The right match<br>changes everything.',d:'Qualified doctors, operators and investors explore opportunities aligned with their ambitions and requirements.',l:'MEETING QUALIFIED BUYERS'},{k:'THE NEGOTIATION ROOM',t:'Clarity creates<br>the way forward.',d:'Commercial terms, due diligence and expectations move forward through structured, confidential dialogue.',l:'NEGOTIATION & ALIGNMENT'},{k:'THE MOMENT OF AGREEMENT',t:'One agreement.<br>A new beginning.',d:'A successful handover brings two journeys together — and opens the next chapter of the healthcare business.',l:'AGREEMENT & HANDOVER'}];let activeCinema=-1;function setCinemaStage(idx){if(idx===activeCinema)return;activeCinema=idx;cinemaCopy.classList.add('out');setTimeout(()=>{const st=cinemaStages[idx];document.getElementById('cinemaKicker').textContent=st.k;document.getElementById('cinemaTitle').innerHTML=st.t;document.getElementById('cinemaText').textContent=st.d;document.getElementById('cinemaLabel').textContent=st.l;document.getElementById('cinemaCount').textContent=String(idx+1).padStart(2,'0')+' / 05';cinemaCopy.classList.remove('out');},280);cinemaShots.forEach((shot,i)=>{shot.classList.toggle('active',i===idx);const v=shot.querySelector('video');if(i===idx){v.play().catch(()=>{});}else{v.pause();}});}function onScroll(){const y=scrollY;header.classList.toggle('scrolled',y>45);const r=journey.getBoundingClientRect(),span=journey.offsetHeight-innerHeight,p=Math.max(0,Math.min(1,-r.top/span));const idx=Math.min(4,Math.floor(p*5));setCinemaStage(idx);document.getElementById('cinemaProgress').style.width=(p*100)+'%';hero.style.backgroundPosition='center '+(50+y*.012)+'%';}
 addEventListener('scroll',onScroll,{passive:true});addEventListener('resize',onScroll);onScroll();
->
+
+// Never leave the visitor trapped on the intro screen.
+const dismissLoader=()=>{if(loader)loader.classList.add('done');};
+if(document.readyState==='complete'||document.readyState==='interactive')setTimeout(dismissLoader,500);
+else{document.addEventListener('DOMContentLoaded',()=>setTimeout(dismissLoader,450),{once:true});}
+setTimeout(dismissLoader,1600);
+
+// Reveal content as it enters the viewport.
+const revealObserver=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('visible');revealObserver.unobserve(entry.target);}}),{threshold:.12});
+document.querySelectorAll('.reveal,.image-reveal,.gold-rule').forEach(el=>revealObserver.observe(el));
+
+// Mobile navigation.
+const menu=document.getElementById('menu'),nav=document.getElementById('navlinks');
+if(menu&&nav){menu.addEventListener('click',()=>nav.classList.toggle('open'));nav.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>nav.classList.remove('open')));}
+
+// Arabic / English switch.
+const language=document.getElementById('language');let currentLanguage='en';
+if(language){language.addEventListener('click',()=>{currentLanguage=currentLanguage==='en'?'ar':'en';document.documentElement.lang=currentLanguage;document.documentElement.dir=currentLanguage==='ar'?'rtl':'ltr';document.querySelectorAll('[data-en][data-ar]').forEach(el=>{const value=el.getAttribute('data-'+currentLanguage);if(value!==null)el.innerHTML=value;});language.textContent=currentLanguage==='ar'?'English':'العربية';});}
+</script></body></html>
